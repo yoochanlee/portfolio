@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hits">
+
+
+<select id="hits_select" parameterType="int" resultType="vo.HitsVo">
+select * from c_hits where c_idx =#{c_idx}
+</select>
+
+  
+<insert id="hits_insert" parameterType="vo.HitsVo">
+insert into c_hits values(c_hits_seq.nextval,1,#{c_idx})
+</insert>
+
+<update id="hits_update" parameterType="vo.HitsVo">
+UPDATE
+    c_hits
+SET
+    s_num = (
+                       SELECT nvl(s_num,0)+1
+                     from c_hits
+                      WHERE c_idx = #{c_idx}
+    ) 
+WHERE
+     c_idx = #{c_idx}
+</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="review">
+
+<select id="review_selectone" parameterType="int" resultType="vo.ReviewVo">
+ select * from detail_review_view where c_idx = #{c_idx} 
+</select>
+
+<select id="review_select" resultType="vo.ReviewVo">
+ select * from detail_review_view order by r_idx desc
+</select>
+
+<select id="review_selectone_up" parameterType="int" resultType="vo.ReviewVo">
+select * from detail_review_view where r_idx = #{r_idx} 
+</select>
+
+<select id="review_selectone_my" parameterType="int" resultType="vo.ReviewVo">
+ select * from detail_review_view where m_idx = #{m_idx} 
+</select>
+
+<select id="review_grade" parameterType="int" resultType="vo.ReviewVo">
+select 
+    r.*, 
+   (bad+notBad+soso+likes+god) as total
+from  	
+(
+	select
+	      nvl(avg(case r_grade when 1 then count(*) end), 0) bad,
+	      nvl(avg(case r_grade when 2 then count(*) end), 0) notBad,
+	      nvl(avg(case r_grade when 3 then count(*) end), 0) soso,
+	      nvl(avg(case r_grade when 4 then count(*) end), 0) likes,
+	      nvl(avg(case r_grade when 5 then count(*) end), 0) god
+	from c_review
+	where c_idx=#{c_idx}
+	group by r_grade
+) r
+</select>
+
+
+
+  <insert id="review_insert" parameterType="vo.ReviewVo">
+  insert into c_review values(c_review_seq.nextval,#{r_cot},#{m_idx},#{c_idx},#{r_grade},#{r_pwd},#{r_ip},sysdate)
+  </insert>
+  
+  <delete id="review_delete" parameterType="int">
+  delete from detail_review_view where r_idx = #{r_idx}
+  </delete>
+  
+  <update id="review_update" parameterType="vo.ReviewVo">
+  update detail_review_view set r_cot=#{r_cot},r_pwd=#{r_pwd},r_grade=#{r_grade} where r_idx=#{r_idx}
+  </update>
+  
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
