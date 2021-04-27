@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafe">
+
+  <select id="cafe_list" resultType="vo.CafeVo">
+  select * from c_cafe order by c_idx desc
+  </select>
+  
+  
+  
+	  <resultMap type="vo.CafeVo" id="cafe_map">
+			<result property="c_idx" column="c_idx"/>
+			
+			<association property="ca_list"  
+			             column="{cc_idx=c_idx}"
+			             select="review_list_cidx"/> 
+			<!-- <collection property="ca_list"
+				  	    column="{cc_idx=c_idx}"
+				  	    select="review_list_cidx"/> -->
+	  </resultMap>
+		
+		
+		
+	 <select id="review_list_cidx" resultType="vo.ReviewVo">
+		 select r.*,
+			round((select avg(r_grade) from c_review where c_idx=#{ cc_idx }),1) avg
+		 from 
+			   (select * from c_review where c_idx=#{ cc_idx } order by r_grade desc) r
+		 where rownum = 1 
+	 </select>	
+	  
+	  <select id="cafe_cafe_condition" parameterType="java.util.Map" resultMap="cafe_map">
+	  
+	  
+	select a.* from 
+	(
+	   select ROWNUM as RNUM, b.* 
+	   from
+	   ( 
+	       select * from c_cafe
+				<if test="c_addr!=null">
+	               where c_addr like '%' || #{c_addr} || '%' 
+	            </if>
+	            <if test="c_tag!=null">
+	               where c_tag like '%' || #{c_tag} || '%' 
+	            </if>
+	       order by c_idx desc
+	    ) b 
+	) a
+	
+	where <![CDATA[ a.RNUM >= (#{c_i}*5)+1 and a.RNUM <= (#{c_i}*5)+5 ]]>
+	        
+	                                              <!-- or | and > where 다음에 둘중 하나가 붙으면  삭제-->
+	           <!-- Map의 name key가 존재하면 -->
+	           
+	      
+	  </select>
+	  
+	  <select id="cafe_selectList" parameterType="java.util.Map" resultType="vo.CafeVo">
+	  	select * from c_cafe 
+	  			<if test="c_addr!=null">
+	               where c_addr like '%' || #{c_addr} || '%' 
+	            </if>
+	            <if test="c_tag!=null">
+	               where c_tag like '%' || #{c_tag} || '%' 
+	            </if>
+	           	  
+	        order by c_idx desc
+	  </select>
+
+  <insert id="cafe_insert" parameterType="vo.CafeVo">
+  insert into c_cafe values(c_cafe_SEQ.nextval,#{c_name},#{c_addr},#{c_tel},#{c_price},#{c_park},#{c_time},#{c_hday},#{c_uri},#{c_map},#{c_photo},#{c_menu1},#{c_menu2},#{c_menu3},#{c_menu4},#{c_tag})
+  </insert>
+  
+  <select id="cafe_select_one" parameterType="int" resultType="vo.CafeVo">
+  select * from c_cafe where c_idx = #{c_idx}
+  </select>
+  
+  <update id="cafe_update" parameterType="vo.CafeVo">
+  update c_cafe set c_name=#{c_name},c_addr=#{c_addr},c_tel=#{c_tel},c_price=#{c_price},c_park=#{c_park},c_time=#{c_time},c_hday=#{c_hday},c_uri=#{c_uri},c_menu1=#{c_menu1},c_menu2=#{c_menu2},c_menu3=#{c_menu3},c_menu4=#{c_menu4},c_tag=#{c_tag},c_photo=#{c_photo},c_map=#{c_map} where c_idx=#{c_idx}
+  </update>
+  
+  <delete id="cafe_delete" parameterType="int">
+  delete from c_cafe where c_idx=#{c_idx}
+  </delete>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

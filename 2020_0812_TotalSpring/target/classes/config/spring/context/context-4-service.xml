@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		<!-- autowired 지원속성 -->
+	<context:annotation-config/>
+			
+	<!-- Autowired 연결하려면 속성 autowire를 해줘야됨 !! --><!-- byName이라는 속성: 이름이 똑같은 얘를 찾아줘! -->
+	<!-- byType : type이 같은 얘로 연결해줌 !  --> <!-- default라는 속성 : 처음에는 byType -> 속성이 같으면 두번째는 byName -->
+	
+	<bean id="cafe_service" class="service.CafeServiceImpl" autowire="default"/>
+	
+	<bean id="member_service" class="service.MemberServiceImpl" autowire="default"/>
+	
+	<bean id="review_service" class="service.ReviewServiceImpl" autowire="default"/>	
+	
+</beans>
